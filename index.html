@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Corporativo - BI Display</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0f172a; /* Fundo escuro para preservar a vida útil da TV */
+            font-family: sans-serif;
+        }
+        iframe {
+            width: 100%; 
+            height: 100%;
+            border: none;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        iframe.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. INSIRA SUAS URLs DO GITHUB OU DO SEU BI AQUI -->
+    <iframe id="dash1" src="URL_DO_DASHBOARD_1" class="active"></iframe>
+    <iframe id="dash2" src="URL_DO_DASHBOARD_2"></iframe>
+
+    <script>
+        const dash1 = document.getElementById('dash1');
+        const dash2 = document.getElementById('dash2');
+        
+        // ================= CONFIGURAÇÕES DE TEMPO =================
+        const tempoRotacao = 30000; // 30 segundos entre as telas
+        const tempoForcarRecarregamento = 900000; // 15 minutos (900.000 ms) para atualizar o código do GitHub
+        // ==========================================================
+
+        // Lógica de Rotação dos Dashboards
+        setInterval(() => {
+            if (dash1.classList.contains('active')) {
+                dash1.classList.remove('active');
+                dash2.classList.add('active');
+                dash1.src = dash1.src; // Atualiza os dados do Dash 1 em background
+            } else {
+                dash2.classList.remove('active');
+                dash1.classList.add('active');
+                dash2.src = dash2.src; // Atualiza os dados do Dash 2 em background
+            }
+        }, tempoRotacao);
+
+        // Lógica de Auto-Reload para buscar atualizações do GitHub e limpar cache/memória
+        setTimeout(() => {
+            window.location.reload(true); // Força o recarregamento limpando o cache do navegador
+        }, tempoForcarRecarregamento);
+    </script>
+</body>
+</html>
