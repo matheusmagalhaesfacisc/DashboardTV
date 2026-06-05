@@ -11,54 +11,63 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #0f172a; /* Fundo escuro para preservar a vida útil da TV */
+            background-color: #0f172a; /* Dark mode para poupar o hardware */
             font-family: sans-serif;
         }
         iframe {
-            width: 100%; 
+            width: 100%;
             height: 100%;
             border: none;
-            display: none;
+            display: none; /* Esconde todos por padrão */
             position: absolute;
             top: 0;
             left: 0;
         }
         iframe.active {
-            display: block;
+            display: block; /* Só mostra o que tiver a classe active */
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. INSIRA SUAS URLs DO GITHUB OU DO SEU BI AQUI -->
+    <!-- 1. DASHBOARDS E APRESENTAÇÕES -->
+    <!-- Dica: Você pode adicionar quantos iframes quiser aqui -->
     <iframe id="dash1" src="https://matheusmagalhaesfacisc.github.io/monitoria-facisc/" class="active"></iframe>
     <iframe id="dash2" src="https://app.powerbi.com/view?r=eyJrIjoiMjRhZmM4OTktZGE2Mi00MjliLTllZWQtY2MxMTNiMjA4NmZiIiwidCI6ImRmNGM1YmY1LWE0ZjUtNGJlOS04NDA3LTZlNjc5MDA4NjRlNyJ9"></iframe>
+    <iframe id="dash3" src="https://docs.google.com/presentation/d/e/SUA_ID_AQUI/pub?start=true&loop=true&delayms=5000"></iframe>
 
     <script>
-        const dash1 = document.getElementById('dash1');
-        const dash2 = document.getElementById('dash2');
-        
+        // Selecionamos todos os iframes de uma vez para ganhar performance
+        const dashboards = document.querySelectorAll('iframe');
+        let currentIndex = 0;
+
         // ================= CONFIGURAÇÕES DE TEMPO =================
-        const tempoRotacao = 30000; // 30 segundos entre as telas
-        const tempoForcarRecarregamento = 900000; // 15 minutos (900.000 ms) para atualizar o código do GitHub
+        const tempoRotacao = 60000; // 60 segundos entre as telas
+        const tempoForcarRecarregamento = 900000; // 15 minutos para refresh total
         // ==========================================================
 
-        // Lógica de Rotação dos Dashboards
+        // Lógica de Rotação Dinâmica (Pensa fora da caixa: funciona para N dashboards)
         setInterval(() => {
-            if (dash1.classList.contains('active')) {
-                dash1.classList.remove('active');
-                dash2.classList.add('active');
-                dash1.src = dash1.src; // Atualiza os dados do Dash 1 em background
-            } else {
-                dash2.classList.remove('active');
-                dash1.classList.add('active');
-                dash2.src = dash2.src; // Atualiza os dados do Dash 2 em background
-            }
+            // 1. Remove o estado ativo do dashboard atual
+            dashboards[currentIndex].classList.remove('active');
+
+            // 2. Calcula o próximo índice (se chegar no fim, volta para o zero)
+            currentIndex = (currentIndex + 1) % dashboards.length;
+
+            // 3. Atualiza o SRC do próximo dashboard ANTES de mostrar (Background Refresh)
+            // Isso garante que quando ele aparecer, o dado já esteja "fresco"
+            dashboards[currentIndex].src = dashboards[currentIndex].src;
+
+            // 4. Adiciona a classe active para mostrar o novo dashboard
+            dashboards[currentIndex].classList.add('active');
+            
+            console.log(`Log: Rotacionado para o dashboard ${currentIndex + 1}`);
         }, tempoRotacao);
 
-        // Lógica de Auto-Reload para buscar atualizações do GitHub e limpar cache/memória
+        // Lógica de Auto-Reload (Hard Refresh) para evitar memory leak e atualizar o código do GitHub
         setTimeout(() => {
-            window.location.reload(true); // Força o recarregamento limpando o cache do navegador
+            console.warn("Log: Realizando refresh sistêmico para atualização de versão.");
+            window.location.reload(true);
         }, tempoForcarRecarregamento);
     </script>
 </body>
